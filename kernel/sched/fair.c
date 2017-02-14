@@ -8855,12 +8855,13 @@ redo:
 		/*
 		 * Another CPU can place tasks, since we do not hold dst_rq lock
 		 * while doing balancing. If newly idle CPU already got something,
-		 * give up to reduce a latency.
+		 * give up to reduce latency for CONFIG_PREEMPT kernels.
 		 */
-		if (env->idle == CPU_NEWLY_IDLE && env->dst_rq->nr_running > 0)
+		if (IS_ENABLED(CONFIG_PREEMPT) && env->idle == CPU_NEWLY_IDLE &&
+				env->dst_rq->nr_running > 0)
 			break;
 
-		p = list_last_entry(tasks, struct task_struct, se.group_node);
+		p = list_first_entry(tasks, struct task_struct, se.group_node);
 
 		env->loop++;
 		/* We've more or less seen every task there is, call it quits */
@@ -8900,8 +8901,9 @@ redo:
 		 */
 		if (((cpu_rq(env->src_cpu)->nr_running > 2) ||
 			(env->flags & LBF_IGNORE_BIG_TASKS)) &&
-			(env->idle != CPU_NEWLY_IDLE) &&
-			((load / 2) > env->imbalance))
+			((!IS_ENABLED(CONFIG_PREEMPT) ||
+			env->idle != CPU_NEWLY_IDLE) &&
+			(load / 2) > env->imbalance))
 			goto next;
 
 		detach_task(p, env);
