@@ -105,3 +105,4 @@ obj-$(CONFIG_POWERKEY_FORCECRASH) += powerkey_forcecrash.o
 obj-$(CONFIG_MMTUNER_MN8855x) += mm_tuner/
 obj-$(CONFIG_ONESEG_TUNER_SMTVJ19X) += oneseg_tuner_drv.o
 obj-$(CONFIG_NFC_CARILLON)	+= carillon/
+obj-$(CONFIG_FORCE_FAST_CHARGE) += fastchg.o
