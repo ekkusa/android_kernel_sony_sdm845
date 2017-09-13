@@ -8861,7 +8861,7 @@ redo:
 				env->dst_rq->nr_running > 0)
 			break;
 
-		p = list_first_entry(tasks, struct task_struct, se.group_node);
+		p = list_last_entry(tasks, struct task_struct, se.group_node);
 
 		env->loop++;
 		/* We've more or less seen every task there is, call it quits */
