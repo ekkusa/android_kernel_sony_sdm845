@@ -219,8 +219,7 @@ static void sugov_get_util(unsigned long *util, unsigned long *max, int cpu)
 #endif
 }
 
-static void sugov_set_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
-				   unsigned int flags)
+static void sugov_set_iowait_boost(struct sugov_cpu *sg_cpu, u64 time)
 {
 	if (is_battery_saver_on())
 		return;
@@ -233,6 +232,23 @@ static void sugov_set_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
 		/* Clear iowait_boost if the CPU apprears to have been idle. */
 		if (delta_ns > TICK_NSEC)
 			sg_cpu->iowait_boost = 0;
+			sg_cpu->iowait_boost_pending = false;
+		}
+	}
+
+	if (sg_cpu->flags & SCHED_CPUFREQ_IOWAIT) {
+		if (sg_cpu->iowait_boost_pending)
+			return;
+
+		sg_cpu->iowait_boost_pending = true;
+
+		if (sg_cpu->iowait_boost) {
+			sg_cpu->iowait_boost <<= 1;
+			if (sg_cpu->iowait_boost > sg_cpu->iowait_boost_max)
+				sg_cpu->iowait_boost = sg_cpu->iowait_boost_max;
+		} else {
+			sg_cpu->iowait_boost = sg_cpu->sg_policy->policy->min;
+		}
 	}
 }
 
@@ -280,7 +296,7 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
 	if (flags & SCHED_CPUFREQ_PL)
 		return;
 
-	sugov_set_iowait_boost(sg_cpu, time, flags);
+	sugov_set_iowait_boost(sg_cpu, time);
 	sg_cpu->last_update = time;
 
 	if (!sugov_should_update_freq(sg_policy, time))
@@ -375,7 +391,7 @@ static void sugov_update_shared(struct update_util_data *hook, u64 time,
 	sg_cpu->max = max;
 	sg_cpu->flags = flags;
 
-	sugov_set_iowait_boost(sg_cpu, time, flags);
+	sugov_set_iowait_boost(sg_cpu, time);
 	sg_cpu->last_update = time;
 
 	if (sugov_should_update_freq(sg_policy, time)) {
@@ -531,20 +547,12 @@ static ssize_t iowait_boost_enable_store(struct gov_attr_set *attr_set,
 
 static struct governor_attr up_rate_limit_us = __ATTR_RW(up_rate_limit_us);
 static struct governor_attr down_rate_limit_us = __ATTR_RW(down_rate_limit_us);
-<<<<<<< HEAD
-static struct governor_attr pl = __ATTR_RW(pl);
-=======
 static struct governor_attr iowait_boost_enable = __ATTR_RW(iowait_boost_enable);
->>>>>>> 5c383fa126eee... cpufreq: schedutil: Remove CAF predicted load functionality
 
 static struct attribute *sugov_attributes[] = {
 	&up_rate_limit_us.attr,
 	&down_rate_limit_us.attr,
-<<<<<<< HEAD
-	&pl.attr,
-=======
 	&iowait_boost_enable.attr,
->>>>>>> 5c383fa126eee... cpufreq: schedutil: Remove CAF predicted load functionality
 	NULL
 };
 
