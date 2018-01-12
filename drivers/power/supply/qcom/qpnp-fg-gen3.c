@@ -743,11 +743,8 @@ static int fg_get_battery_temp(struct fg_chip *chip, int *val)
 	temp = ((buf[1] & BATT_TEMP_MSB_MASK) << 8) |
 		(buf[0] & BATT_TEMP_LSB_MASK);
 #if !defined(CONFIG_SOMC_CHARGER_EXTENSION)
-	temp = DIV_ROUND_CLOSEST(temp, 4);
+        *val = DIV_ROUND_CLOSEST((temp - 273*4) * 10, 4);
 
-	/* Value is in Kelvin; Convert it to deciDegC */
-	temp = (temp - 273) * 10;
-	*val = temp;
 #endif
 #if defined(CONFIG_SOMC_CHARGER_EXTENSION)
 	/* Value is in Kelvin; Convert it to deciDegC with keeping accuracy */
