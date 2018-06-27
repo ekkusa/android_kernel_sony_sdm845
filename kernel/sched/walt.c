@@ -3764,6 +3764,7 @@ void walt_irq_work_roll_over(struct irq_work *irq_work)
 	struct rq *rq;
 	int cpu;
 	u64 wc, total_grp_load = 0;
+	bool is_migration = false;
 	int level = 0;
 
 	for_each_cpu(cpu, cpu_possible_mask) {
@@ -3802,9 +3803,24 @@ void walt_irq_work_roll_over(struct irq_work *irq_work)
 	if (total_grp_load)
 		walt_update_coloc_boost_load();
 
-	for_each_sched_cluster(cluster)
-		for_each_cpu(cpu, &cluster->cpus)
-			cpufreq_update_util(cpu_rq(cpu), SCHED_CPUFREQ_WALT);
+	for_each_sched_cluster(cluster) {
+		for_each_cpu(cpu, &cluster->cpus) {
+			int nflag = 0;
+
+			rq = cpu_rq(cpu);
+
+			if (is_migration) {
+				if (rq->notif_pending) {
+					nflag = SCHED_CPUFREQ_INTERCLUSTER_MIG;
+					rq->notif_pending = false;
+				} else {
+					nflag = SCHED_CPUFREQ_FORCE_UPDATE;
+				}
+			}
+
+			cpufreq_update_util(rq, nflag);
+		}
+	}
 
 	for_each_cpu(cpu, cpu_possible_mask)
 		raw_spin_unlock(&cpu_rq(cpu)->lock);
