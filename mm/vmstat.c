@@ -934,6 +934,7 @@ const char * const vmstat_text[] = {
 	"nr_kernel_stack",
 	"nr_overhead",
 	"nr_bounce",
+	"nr_ion_heap",
 #if IS_ENABLED(CONFIG_ZSMALLOC)
 	"nr_zspages",
 #endif

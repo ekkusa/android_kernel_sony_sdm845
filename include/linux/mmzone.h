@@ -135,6 +135,7 @@ enum zone_stat_item {
 	NR_KERNEL_STACK_KB,	/* measured in KiB */
 	NR_KAISERTABLE,
 	NR_BOUNCE,
+        NR_ION_HEAP,            /* allocation from ION system heap */
 	/* Second 128 byte cacheline */
 #if IS_ENABLED(CONFIG_ZSMALLOC)
 	NR_ZSPAGES,		/* allocated in zsmalloc */
