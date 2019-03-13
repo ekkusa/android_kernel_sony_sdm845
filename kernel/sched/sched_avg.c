@@ -191,11 +191,23 @@ unsigned int sched_get_cpu_util(int cpu)
 	unsigned long capacity, flags;
 	unsigned int busy;
 
+<<<<<<< HEAD
 	if (!walt_disabled && sysctl_sched_use_walt_cpu_util) {
 		util = rq->prev_runnable_sum + rq->grp_time.prev_runnable_sum;
 		util = div64_u64(util,
 				 sched_ravg_window >> SCHED_CAPACITY_SHIFT);
 	}
+=======
+	raw_spin_lock_irqsave(&rq->lock, flags);
+
+	util = rq->cfs.avg.util_avg;
+	capacity = capacity_orig_of(cpu);
+
+	util = rq->prev_runnable_sum + rq->grp_time.prev_runnable_sum;
+	util = div64_u64(util,
+			 sched_ravg_window >> SCHED_CAPACITY_SHIFT);
+
+>>>>>>> e1f657d25e09e... sched: clean-up unused/duplicate functions & variables
 	raw_spin_unlock_irqrestore(&rq->lock, flags);
 
 done: __maybe_unused
