@@ -135,7 +135,7 @@ unsigned int sysctl_sched_child_runs_first __read_mostly = 1;
 unsigned int sysctl_sched_wakeup_granularity = 1000000UL;
 unsigned int normalized_sysctl_sched_wakeup_granularity = 1000000UL;
 
-unsigned int __read_mostly sysctl_sched_migration_cost = 500000UL;
+unsigned int __read_mostly sysctl_sched_migration_cost	= 500000UL;
 
 /*
  * The exponential sliding  window over which load is averaged for shares
@@ -689,7 +689,6 @@ int sched_proc_update_handler(struct ctl_table *table, int write,
 
 	return 0;
 }
-
 
 /*
  * delta /= w
