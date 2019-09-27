@@ -191,7 +191,11 @@ unsigned int sched_get_cpu_util(int cpu)
 	unsigned long capacity, flags;
 	unsigned int busy;
 
-#ifdef CONFIG_SCHED_WALT
+	raw_spin_lock_irqsave(&rq->lock, flags);
+
+	util = rq->cfs.avg.util_avg;
+	capacity = capacity_orig_of(cpu);
+
 	if (!walt_disabled && sysctl_sched_use_walt_cpu_util) {
 		u32 prev_run_sum, group_run_sum;
 
@@ -205,10 +209,6 @@ unsigned int sched_get_cpu_util(int cpu)
 
 		goto done;
 	}
-#endif
-
-	raw_spin_lock_irqsave(&rq->lock, flags);
-	util = rq->cfs.avg.util_avg;
 	raw_spin_unlock_irqrestore(&rq->lock, flags);
 
 done: __maybe_unused
