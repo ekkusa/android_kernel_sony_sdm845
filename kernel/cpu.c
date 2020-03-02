@@ -1315,8 +1315,8 @@ int freeze_secondary_cpus(int primary)
 {
 	int cpu, error = 0;
 
-	unaffine_perf_irqs();
 	cpu_maps_update_begin();
+	unaffine_perf_irqs();
 	if (!cpu_online(primary))
 		primary = cpumask_first(cpu_online_mask);
 	/*
