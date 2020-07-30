@@ -380,9 +380,7 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
 	unsigned int next_f;
 	bool busy;
 
-	flags &= ~SCHED_CPUFREQ_RT_DL;
-
-	if (!sg_policy->tunables->pl && flags & SCHED_CPUFREQ_PL)
+	if (flags & SCHED_CPUFREQ_PL)
 		return;
 
 	sugov_set_iowait_boost(sg_cpu, time);
@@ -491,8 +489,6 @@ static void sugov_update_shared(struct update_util_data *hook, u64 time,
 		return;
 
 	sugov_get_util(&util, &max, sg_cpu->cpu);
-
-	flags &= ~SCHED_CPUFREQ_RT_DL;
 
 	raw_spin_lock(&sg_policy->update_lock);
 
