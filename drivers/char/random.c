@@ -113,6 +113,16 @@ EXPORT_SYMBOL(rng_is_initialized);
 /* Used by wait_for_random_bytes(), and considered an entropy collector, below. */
 static void try_to_generate_entropy(void);
 
+#ifdef CONFIG_SRANDOM
+#include <../drivers/char/srandom/srandom.h>
+#endif
+
+/*
+ * The minimum number of bits of entropy before we wake up a read on
+ * /dev/random.  Should be enough to do a significant reseed.
+ */
+static int random_read_wakeup_bits = 64;
+
 /*
  * Wait for the input pool to be seeded and thus guaranteed to supply
  * cryptographically secure random numbers. This applies to: the /dev/urandom
@@ -1291,7 +1301,13 @@ static ssize_t urandom_read_iter(struct kiocb *kiocb, struct iov_iter *iter)
 	return get_random_bytes_user(iter);
 }
 
+<<<<<<< HEAD
 static ssize_t random_read_iter(struct kiocb *kiocb, struct iov_iter *iter)
+=======
+#ifndef CONFIG_SRANDOM
+static ssize_t random_write(struct file *file, const char __user *buffer,
+			    size_t count, loff_t *ppos)
+>>>>>>> 896a5272e512... char: random: use sdevice_{read,write} for {u}random fops
 {
 	int ret;
 
@@ -1300,6 +1316,7 @@ static ssize_t random_read_iter(struct kiocb *kiocb, struct iov_iter *iter)
 		return ret;
 	return get_random_bytes_user(iter);
 }
+#endif
 
 static long random_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
 {
@@ -1371,9 +1388,20 @@ static int random_fasync(int fd, struct file *filp, int on)
 }
 
 const struct file_operations random_fops = {
+<<<<<<< HEAD
 	.read_iter = random_read_iter,
 	.write_iter = random_write_iter,
 	.poll = random_poll,
+=======
+	#ifdef CONFIG_SRANDOM
+	.read  = sdevice_read,
+	.write = sdevice_write,
+	#else
+	.read  = random_read,
+	.write = random_write,
+	#endif
+	.poll  = random_poll,
+>>>>>>> 896a5272e512... char: random: use sdevice_{read,write} for {u}random fops
 	.unlocked_ioctl = random_ioctl,
 	.fasync = random_fasync,
 	.llseek = noop_llseek,
@@ -1382,8 +1410,18 @@ const struct file_operations random_fops = {
 };
 
 const struct file_operations urandom_fops = {
+<<<<<<< HEAD
 	.read_iter = urandom_read_iter,
 	.write_iter = random_write_iter,
+=======
+	#ifdef CONFIG_SRANDOM
+	.read  = sdevice_read,
+	.write = sdevice_write,
+	#else
+	.read  = urandom_read,
+	.write = random_write,
+	#endif
+>>>>>>> 896a5272e512... char: random: use sdevice_{read,write} for {u}random fops
 	.unlocked_ioctl = random_ioctl,
 	.fasync = random_fasync,
 	.llseek = noop_llseek,
