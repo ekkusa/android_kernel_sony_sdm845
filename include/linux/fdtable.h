@@ -120,7 +120,11 @@ extern void __fd_install(struct files_struct *files,
 		      unsigned int fd, struct file *file);
 extern int __close_fd(struct files_struct *files,
 		      unsigned int fd);
+<<<<<<< HEAD
 extern int close_fd_get_file(unsigned int fd, struct file **res);
+=======
+extern int __close_fd_get_file(unsigned int fd, struct file **res);
+>>>>>>> 6017c9841cf5... binder: Fix 5.4 binder compilation on 4.9
 
 extern struct kmem_cache *files_cachep;
 
