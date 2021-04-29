@@ -72,6 +72,16 @@ int suid_dumpable = 0;
 static LIST_HEAD(formats);
 static DEFINE_RWLOCK(binfmt_lock);
 
+#define ZYGOTE32_BIN "/system/bin/app_process32"
+#define ZYGOTE64_BIN "/system/bin/app_process64"
+static pid_t zygote32_pid;
+static pid_t zygote64_pid;
+
+bool is_zygote_pid(pid_t pid)
+{
+	return pid == zygote32_pid || pid == zygote64_pid;
+}
+
 void __register_binfmt(struct linux_binfmt * fmt, int insert)
 {
 	BUG_ON(!fmt);
