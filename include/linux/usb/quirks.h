@@ -62,4 +62,7 @@
 /* Device needs a vendor specific phy init. */
 #define USB_QUIRK_VENDOR_SPEC_PHY_INIT		BIT(16)
 
+/* device has blacklisted endpoints */
+#define USB_QUIRK_ENDPOINT_BLACKLIST		BIT(15)
+
 #endif /* __LINUX_USB_QUIRKS_H */
