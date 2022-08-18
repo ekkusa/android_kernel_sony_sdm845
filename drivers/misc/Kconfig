@@ -931,8 +931,8 @@ config ONESEG_TUNER_SMTVJ19X
 
 config CXD224X_NFC
 	bool "CXD224X driver for FeliCa and NFC"
-	depends on I2C
 	default n
+	depends on I2C
 	help
 	  This option enables device driver support for Sony CXD224X
 	  series. This driver enables the control of CXD224X series
@@ -954,6 +954,7 @@ source "drivers/misc/cxl/Kconfig"
 source "drivers/misc/fpr_FingerprintCard/Kconfig"
 source "drivers/misc/mm_tuner/Kconfig"
 source "drivers/misc/carillon/Kconfig"
+
 endmenu
 
 config OKL4_LINK_SHBUF
