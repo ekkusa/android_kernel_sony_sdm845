@@ -878,7 +878,6 @@ static int sugov_init(struct cpufreq_policy *policy)
 		goto stop_kthread;
 	}
 
-<<<<<<< HEAD
 	/*
 	 * NOTE:
 	 * intializing up_rate/down_rate to 0 explicitly in kernel
