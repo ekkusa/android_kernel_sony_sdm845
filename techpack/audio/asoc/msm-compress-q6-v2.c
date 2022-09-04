@@ -3460,7 +3460,7 @@ static int msm_compr_query_audio_effect_get(struct snd_kcontrol *kcontrol,
 	}
 	prtd = cstream->runtime->private_data;
 	if (!prtd) {
-		pr_err("%s: cannot set audio effects\n", __func__);
+		pr_debug("%s: cannot set audio effects\n", __func__);
 		ret = -EINVAL;
 		goto done;
 	}
