@@ -1118,7 +1118,6 @@ int smblib_set_icl_current(struct smb_charger *chg, int icl_ua)
 	u8 reg;
 	bool icl_setting_again = false;
 
-	smblib_dbg(chg, PR_SOMC, "set ICL to %duA\n", icl_ua);
 #endif
 
 	/* suspend and return if 25mA or less is requested */
@@ -2859,8 +2858,6 @@ int smblib_set_prop_system_temp_level(struct smb_charger *chg,
 			chg->thermal_mitigation[chg->system_temp_level]);
 #endif
 #if defined(CONFIG_SOMC_CHARGER_EXTENSION)
-	smblib_dbg(chg, PR_SOMC, "Changed Thernal LV from %d to %d\n",
-					chg->system_temp_level, val->intval);
 	if (val->intval < 0)
 		return -EINVAL;
 
@@ -6191,8 +6188,6 @@ irqreturn_t smblib_handle_aicl_done(int irq, void *data)
 	}
 
 	if (stat & ICL_IMIN_BIT) {
-		smblib_dbg(chg, PR_SOMC,
-				"ICL_IMIN is detected, suspending usbin\n");
 		vote(chg->usb_icl_votable, LEGACY_UNKNOWN_VOTER, true, 0);
 	}
 
@@ -6573,8 +6568,6 @@ static void smblib_icl_change_work(struct work_struct *work)
 	}
 
 	power_supply_changed(chg->usb_main_psy);
-
-	smblib_dbg(chg, PR_INTERRUPT, "icl_settled=%d\n", settled_ua);
 }
 
 static void smblib_pl_enable_work(struct work_struct *work)
