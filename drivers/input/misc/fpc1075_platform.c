@@ -472,7 +472,6 @@ static irqreturn_t fpc1145_irq_handler(int irq, void *handle)
 
 	if (atomic_read(&fpc1145->wakeup_enabled)) {
 		pm_stay_awake(fpc1145->dev);
-		dev_info(fpc1145->dev, "%s: wakeup mode\n", __func__);
 	}
 
 	sysfs_notify(&fpc1145->dev->kobj, NULL, dev_attr_irq.attr.name);
