@@ -830,7 +830,7 @@ static int smb2_usb_set_prop(struct power_supply *psy,
 #if defined(CONFIG_SOMC_CHARGER_EXTENSION)
 	if (!chg->typec_present &&
 		psp != POWER_SUPPLY_PROP_TYPEC_POWER_ROLE) {
-		pr_warn("set_prop is inhibited because typec is not present\n");
+		pr_debug("set_prop is inhibited because typec is not present\n");
 #endif
 		switch (psp) {
 		case POWER_SUPPLY_PROP_MOISTURE_DETECTED:
