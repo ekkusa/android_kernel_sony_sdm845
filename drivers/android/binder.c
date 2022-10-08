@@ -193,14 +193,6 @@ static struct kmem_cache *binder_thread_pool;
 static struct kmem_cache *binder_transaction_pool;
 static struct kmem_cache *binder_work_pool;
 
-static struct kmem_cache *binder_node_pool;
-static struct kmem_cache *binder_proc_pool;
-static struct kmem_cache *binder_ref_death_pool;
-static struct kmem_cache *binder_ref_pool;
-static struct kmem_cache *binder_thread_pool;
-static struct kmem_cache *binder_transaction_pool;
-static struct kmem_cache *binder_work_pool;
-
 static struct binder_transaction_log_entry *binder_transaction_log_add(
 	struct binder_transaction_log *log)
 {
@@ -1687,6 +1679,11 @@ static void binder_free_transaction(struct binder_transaction *t)
 	}
 	if (trace_binder_txn_latency_free_enabled())
 		binder_txn_latency_free(t);
+	/*
+	 * If the transaction has no target_proc, then
+	 * t->buffer->transaction has already been cleared.
+	 */
+	binder_free_txn_fixups(t);
 	/*
 	 * If the transaction has no target_proc, then
 	 * t->buffer->transaction has already been cleared.
@@ -3321,6 +3318,8 @@ err_get_secctx_failed:
 	kmem_cache_free(binder_work_pool, tcomplete);
 	binder_stats_deleted(BINDER_STAT_TRANSACTION_COMPLETE);
 err_alloc_tcomplete_failed:
+	if (trace_binder_txn_latency_free_enabled())
+		binder_txn_latency_free(t);
 	kmem_cache_free(binder_transaction_pool, t);
 	binder_stats_deleted(BINDER_STAT_TRANSACTION);
 err_alloc_t_failed:
@@ -4115,7 +4114,6 @@ retry:
 			else
 				cmd = BR_TRANSACTION_COMPLETE;
 			binder_inner_proc_unlock(proc);
-			cmd = BR_TRANSACTION_COMPLETE;
 			kmem_cache_free(binder_work_pool, w);
 			binder_stats_deleted(BINDER_STAT_TRANSACTION_COMPLETE);
 			if (put_user(cmd, (uint32_t __user *)ptr))
@@ -6220,9 +6218,9 @@ static int __init binder_init(void)
 	if (ret)
 		return ret;
 
-	ret = binder_create_pools();
+	ret = binder_alloc_shrinker_init();
 	if (ret)
-		return ret;
+		goto err_alloc_shrinker_failed;
 
 	atomic_set(&binder_transaction_log.cur, ~0U);
 	atomic_set(&binder_transaction_log_failed.cur, ~0U);
@@ -6297,7 +6295,6 @@ err_init_binder_device_failed:
 
 err_alloc_device_names_failed:
 	debugfs_remove_recursive(binder_debugfs_dir_entry_root);
-	binder_destroy_pools();
 
 err_alloc_shrinker_failed:
 	binder_destroy_pools();
