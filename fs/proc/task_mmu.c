@@ -23,6 +23,13 @@
 #include <asm/tlbflush.h>
 #include "internal.h"
 
+#ifdef CONFIG_PROCESS_RECLAIM
+#include <linux/init.h>
+#include <linux/cred.h>
+#include <linux/proc_fs.h>
+#include <linux/module.h>
+#include <linux/uidgid.h>
+
 struct proc_dir_entry *reclaim_pid_file;
 #endif
 
