@@ -66,8 +66,6 @@
 #include <linux/rbtree.h>
 #include <linux/rtmutex.h>
 #include <linux/sched.h>
-#include <linux/sched/signal.h>
-#include <linux/sched/mm.h>
 #include <linux/signal.h>
 #include <linux/mm.h>
 #include <linux/seq_file.h>
