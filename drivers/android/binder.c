@@ -1702,8 +1702,6 @@ static void binder_free_transaction(struct binder_transaction *t)
 			t->buffer->transaction = NULL;
 		binder_inner_proc_unlock(target_proc);
 	}
-<<<<<<< HEAD
-=======
 	if (trace_binder_txn_latency_free_enabled())
 		binder_txn_latency_free(t);
 	/*
@@ -1715,7 +1713,6 @@ static void binder_free_transaction(struct binder_transaction *t)
 	 * If the transaction has no target_proc, then
 	 * t->buffer->transaction has already been cleared.
 	 */
->>>>>>> parent of 1bfbd4cdd5c56... [SQUASH] Revert "android: sync android12-5.4 binder"
 	kmem_cache_free(binder_transaction_pool, t);
 	binder_stats_deleted(BINDER_STAT_TRANSACTION);
 }
@@ -3346,11 +3343,8 @@ err_get_secctx_failed:
 	kmem_cache_free(binder_work_pool, tcomplete);
 	binder_stats_deleted(BINDER_STAT_TRANSACTION_COMPLETE);
 err_alloc_tcomplete_failed:
-<<<<<<< HEAD
-=======
 	if (trace_binder_txn_latency_free_enabled())
 		binder_txn_latency_free(t);
->>>>>>> parent of 1bfbd4cdd5c56... [SQUASH] Revert "android: sync android12-5.4 binder"
 	kmem_cache_free(binder_transaction_pool, t);
 	binder_stats_deleted(BINDER_STAT_TRANSACTION);
 err_alloc_t_failed:
@@ -4155,11 +4149,6 @@ retry:
 			binder_debug(BINDER_DEBUG_TRANSACTION_COMPLETE,
 				     "%d:%d BR_TRANSACTION_COMPLETE\n",
 				     proc->pid, thread->pid);
-<<<<<<< HEAD
-			kmem_cache_free(binder_work_pool, w);
-			binder_stats_deleted(BINDER_STAT_TRANSACTION_COMPLETE);
-=======
->>>>>>> parent of 1bfbd4cdd5c56... [SQUASH] Revert "android: sync android12-5.4 binder"
 		} break;
 		case BINDER_WORK_NODE: {
 			struct binder_node *node = container_of(w, struct binder_node, work);
@@ -6254,15 +6243,9 @@ static int __init binder_init(void)
 	if (ret)
 		return ret;
 
-<<<<<<< HEAD
-	ret = binder_create_pools();
-	if (ret)
-		return ret;
-=======
 	ret = binder_alloc_shrinker_init();
 	if (ret)
 		goto err_alloc_shrinker_failed;
->>>>>>> parent of 1bfbd4cdd5c56... [SQUASH] Revert "android: sync android12-5.4 binder"
 
 	atomic_set(&binder_transaction_log.cur, ~0U);
 	atomic_set(&binder_transaction_log_failed.cur, ~0U);
