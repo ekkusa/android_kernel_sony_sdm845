@@ -9019,13 +9019,11 @@ next:
 /*
  * attach_task() -- attach the task detached by detach_task() to its new rq.
  */
-static void attach_task(struct rq *rq,
-	struct task_struct *p, struct lb_env *env)
+static void attach_task(struct rq *rq, struct task_struct *p)
 {
 	lockdep_assert_held(&rq->lock);
 
 	BUG_ON(task_rq(p) != rq);
-	walt_finish_migrate(p, env->src_cpu, env->dst_cpu, true);
 	activate_task(rq, p, 0);
 	p->on_rq = TASK_ON_RQ_QUEUED;
 	check_preempt_curr(rq, p, 0);
@@ -9039,7 +9037,7 @@ static void attach_one_task(struct rq *rq,
 	struct task_struct *p, struct lb_env *env)
 {
 	raw_spin_lock(&rq->lock);
-	attach_task(rq, p, env);
+	attach_task(rq, p);
 	raw_spin_unlock(&rq->lock);
 }
 
@@ -9047,23 +9045,21 @@ static void attach_one_task(struct rq *rq,
  * attach_tasks() -- attaches all tasks detached by detach_tasks() to their
  * new rq.
  */
-static void attach_tasks(struct lb_env *env, bool dst_locked)
+static void attach_tasks(struct lb_env *env)
 {
 	struct list_head *tasks = &env->tasks;
 	struct task_struct *p;
 
-	if (!dst_locked)
-		raw_spin_lock(&env->dst_rq->lock);
+	raw_spin_lock(&env->dst_rq->lock);
 
 	while (!list_empty(tasks)) {
 		p = list_first_entry(tasks, struct task_struct, se.group_node);
 		list_del_init(&p->se.group_node);
 
-		attach_task(env->dst_rq, p, env);
+		attach_task(env->dst_rq, p);
 	}
 
-	if (!dst_locked)
-		raw_spin_unlock(&env->dst_rq->lock);
+	raw_spin_unlock(&env->dst_rq->lock);
 }
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
@@ -10573,15 +10569,6 @@ more_balance:
 		 * ld_moved     - cumulative load moved across iterations
 		 */
 		cur_ld_moved = detach_tasks(&env);
-		if (cur_ld_moved) {
-			if (same_freq_domain(env.src_cpu, env.dst_cpu))
-				/*
-				 * If we move tasks within the same freq domain, it is
-				 * important to acquire dst_rq before releasing src_rq
-				 * to prevent potential load drop.
-				 */
-				double_lock_balance(env.src_rq, env.dst_rq);
-		}
 
 		/*
 		 * We've detached some tasks from busiest_rq. Every
@@ -10594,13 +10581,7 @@ more_balance:
 		raw_spin_unlock(&busiest->lock);
 
 		if (cur_ld_moved) {
-			if (same_freq_domain(env.src_cpu, env.dst_cpu)) {
-				attach_tasks(&env, true);
-				raw_spin_unlock(&env.dst_rq->lock);
-			} else {
-				attach_tasks(&env, false);
-			}
-
+			attach_tasks(&env);
 			ld_moved += cur_ld_moved;
 		}
 
