@@ -601,7 +601,7 @@ int pm_suspend(suspend_state_t state)
 
 	pm_suspend_marker("entry");
 	error = enter_state(state);
-	gpio_set_value(slst_gpio_base_id + PROC_AWAKE_ID, 0;
+	gpio_set_value(slst_gpio_base_id + PROC_AWAKE_ID, 1);
 	if (error) {
 		suspend_stats.fail++;
 		dpm_save_failed_errno(error);

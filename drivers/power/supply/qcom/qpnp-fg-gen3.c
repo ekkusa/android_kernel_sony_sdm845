@@ -7031,7 +7031,7 @@ static int fg_gen3_probe(struct platform_device *pdev)
 #if defined(CONFIG_SOMC_CHARGER_EXTENSION)
 	fg_somc_restore_batt_aging_level(chip);
 #endif
-	schedule_delayed_work(system_power_efficient_wq, &chip->profile_load_work, 0);
+	queue_delayed_work(system_power_efficient_wq, &chip->profile_load_work, 0);
 
 	pr_debug("FG GEN3 driver probed successfully\n");
 	return 0;
