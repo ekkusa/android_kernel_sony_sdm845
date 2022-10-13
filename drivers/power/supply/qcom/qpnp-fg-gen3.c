@@ -2477,9 +2477,8 @@ static int fg_charge_full_update(struct fg_chip *chip)
 				chip->recharge_counter++;
 				need_monotonic_soc_update = true;
 			} else {
-				pr_debug(chip, FG_SOMC,
-					"
-Other case during charge_full.\n");
+				fg_dbg(chip, FG_SOMC,
+					"Other case during charge_full.\n");
 			}
 		} else if (chip->charge_status ==
 				POWER_SUPPLY_STATUS_CHARGING) {
