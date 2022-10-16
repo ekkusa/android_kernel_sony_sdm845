@@ -3153,6 +3153,7 @@
 		thermal-sensors = <&pm8998_adc_tm 0x4c>;
 		thermal-governor = "step_wise";
 		wake-capable-sensor;
+		disable-thermal-zone;
 
 		trips {
 			active-config0 {
@@ -3169,6 +3170,7 @@
 		thermal-sensors = <&pm8998_adc_tm 0x4c>;
 		thermal-governor = "step_wise";
 		wake-capable-sensor;
+		disable-thermal-zone;
 
 		trips {
 			active-config0 {
@@ -3200,6 +3202,7 @@
 		thermal-sensors = <&pm8998_adc_tm 0x4c>;
 		thermal-governor = "step_wise";
 		wake-capable-sensor;
+		disable-thermal-zone;
 
 		trips {
 			active-config0 {
@@ -3215,6 +3218,8 @@
 		polling-delay = <0>;
 		thermal-sensors = <&pm8998_adc_tm 0x50>;
 		thermal-governor = "step_wise";
+                wake-capable-sensor;
+		disable-thermal-zone;
 
 		trips {
 			active-config0 {
@@ -3260,7 +3265,7 @@
 	ibat-high {
 		trips {
 			low-ibat {
-				temperature = <4300>;
+				temperature = <5400>;
 				hysteresis = <200>;
 				type = "passive";
 			};
@@ -3269,7 +3274,7 @@
 	ibat-vhigh {
 		trips {
 			ibat_vhigh {
-				temperature = <4300>;
+				temperature = <5400>;
 				hysteresis = <100>;
 				type = "passive";
 			};
@@ -3303,6 +3308,8 @@
 		};
 	};
 	soc {
+		polling-delay-passive = <0>;
+
 		trips {
 			low-soc {
 				temperature = <5>;
@@ -3311,6 +3318,63 @@
 			};
 		};
 	};
+
+	aoss0-usr {
+		status = "disabled";
+	};
+
+	aoss1-usr {
+		status = "disabled";
+	};
+
+	camera-usr {
+		status = "disabled";
+	};
+
+	compute-hvx-usr {
+		status = "disabled";
+	};
+
+	ddr-usr {
+		status = "disabled";
+	};
+
+	gold-virt-max-step {
+		status = "disabled";
+	};
+
+	gpu-virt-max-step {
+		status = "disabled";
+	};
+
+	kryo-l3-0-usr {
+		status = "disabled";
+	};
+
+	kryo-l3-1-usr {
+		status = "disabled";
+	};
+
+	mdm-core-usr {
+		status = "disabled";
+	};
+
+	mdm-dsp-usr {
+		status = "disabled";
+	};
+
+	mmss-usr {
+		status = "disabled";
+	};
+
+	silv-virt-max-step {
+		status = "disabled";
+	};
+
+	wlan-usr {
+		status = "disabled";
+	};
+
 };
 
 &sdhc_2 {
