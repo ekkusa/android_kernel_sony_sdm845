@@ -1353,6 +1353,7 @@ static int dwc3_probe(struct platform_device *pdev)
 	dwc->num_in_eps = 16;
 	dwc->num_out_eps = 16;
 
+<<<<<<< HEAD
 	ret = dwc3_core_init_mode(dwc);
 	if (ret)
 		goto err1;
@@ -1367,6 +1368,19 @@ static int dwc3_probe(struct platform_device *pdev)
 					dev_name(dwc->dev), 0);
 	if (!dwc->dwc_ipc_log_ctxt)
 		dev_err(dwc->dev, "Error getting ipc_log_ctxt\n");
+=======
+	usb_phy_set_suspend(dwc->usb2_phy, 1);
+	usb_phy_set_suspend(dwc->usb3_phy, 1);
+	phy_power_off(dwc->usb2_generic_phy);
+	phy_power_off(dwc->usb3_generic_phy);
+
+	usb_phy_shutdown(dwc->usb2_phy);
+	usb_phy_shutdown(dwc->usb3_phy);
+	phy_exit(dwc->usb2_generic_phy);
+	phy_exit(dwc->usb3_generic_phy);
+
+	dwc3_ulpi_exit(dwc);
+>>>>>>> e9098858cbe1d503b544105f314ba0357226a742
 
 	dwc3_instance[count] = dwc;
 	dwc->index = count;
